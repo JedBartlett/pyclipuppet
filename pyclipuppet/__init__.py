@@ -1,2 +1,2 @@
-from runCommands import CommandLine
-from runCommands import blocking_cmd
+from runcommands import CommandLine
+from runcommands import blocking_cmd
