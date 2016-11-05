@@ -20,7 +20,21 @@ def step_impl(context, text):
     context.command = text
     context.cli.command(text)
 
-@then('"{text}" should be found in the output')
+@then('"{text}" can be found in the output')
 def step_impl(context, text):
-    context.cli.terminate()
-    assert(text in context.cli.lastoutput)
+    try:
+        assert(text in context.cli.lastoutput)
+    except:
+        print('output was "{}"'.format(context.cli.lastoutput))
+        assert(True == False)
+
+@then('the error level returned is: "{text}"')
+def step_impl(context, text):
+    try:
+        assert(int(text) == int(context.cli.lastreturncode))
+    except:
+        print('%errorlevel% was "{}"'.format(context.cli.lastreturncode.strip()))
+        assert(True == False)
+
+
+

@@ -23,11 +23,16 @@ class CommandLine():
                                     stderr=STDOUT)
         outs = read_output(self.cli)
         self.lastoutput = outs
+        self.lastreturncode = 0
 
-    def command(self, cmd):
+    def singleCommand(self, cmd):
         self.cli.stdin.write('{}\n'.format(cmd))
         self.cli.poll()
-        self.lastoutput = read_output(self.cli)
+        return read_output(self.cli)
+
+    def command(self, cmd):
+        self.lastoutput = self.singleCommand(cmd).strip()
+        self.lastreturncode = self.singleCommand('echo %errorlevel%').strip()
         return self.lastoutput
 
     def terminate(self):
@@ -108,3 +113,15 @@ if len(USER_ARGS) > 0:
             test_print_indented(returnval)
             test_print_indented('looking for: {}'.format(expectedReturn))
 
+        #4th test - Ensure that the return codes are being obtained
+        cmd1 = 'abadcommandyouwontfind'
+        expectedReturnError = 9009
+        test4cli = CommandLine()
+        stdout = test4cli.command(cmd1)
+        if expectedReturnError == int(test4cli.lastreturncode):
+            print('pass -- issuing {} gave errorcode:'.format(cmd1))
+            test_print_indented(test4cli.lastreturncode)
+        else:
+            print('FAIL -- issuing {} gave errorcode:'.format(cmd1))
+            test_print_indented(test4cli.lastreturncode)
+            test_print_indented('looking for: {}'.format(expectedReturnError))

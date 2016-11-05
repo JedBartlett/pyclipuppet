@@ -1,9 +1,9 @@
 from behave import *
 
-def before_step(context):
+def before_scenario(context):
     context.config.setup_logging()
 
-def after_step(context):
+def after_scenario(context):
     try:
         context.cli.terminate()
     except:
